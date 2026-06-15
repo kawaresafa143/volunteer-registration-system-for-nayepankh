@@ -1,15 +1,20 @@
-Nayepankh Volunteer Registration System
-This is a volunteer registration system built for Nayepankh, a non-governmental organization (NGO) dedicated to helping underprivileged individuals with basic needs, including menstrual hygiene, food distribution, and crowdfunding. This system streamlines the process for new members to register, volunteer for events, and contribute to these important causes.
+<div align="center">
+<img width="1200" height="475" alt="GHBanner" src="https://ai.google.dev/static/site-assets/images/share-ais-513315318.png" />
+</div>
 
-Features
---Volunteer Registrations: A streamlined sign-up process for new members wanting to help.
+# Run and deploy your AI Studio app
 
---Admin Portal: A centralized dashboard for managing the platform and its users.
+This contains everything you need to run your app locally.
 
---Analytics and Reviewing: Tools that allow the admin to verify volunteer registrations, review their specific interests, and track overall engagement.
+View your app in AI Studio: https://ai.studio/apps/98d23bab-b1e6-40e5-9053-a88e20c01bf1
 
---AI Chatbot: An intelligent assistant designed to help users by answering their basic questions immediately.
+## Run Locally
 
---Automated Document Generator: Automatically creates official documents from the admin side for volunteers once their registration is approved.
+**Prerequisites:**  Node.js
 
---Document Verification: A system to ensure the authenticity and validity of submitted documents.
+
+1. Install dependencies:
+   `npm install`
+2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
+3. Run the app:
+   `npm run dev`

@@ -13,11 +13,9 @@ import {
 } from 'lucide-react';
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState<'register' | 'admin'>(() => {
-    const isSearchAdmin = typeof window !== 'undefined' && (window.location.search.includes('view=admin') || window.location.search.includes('admin=true'));
-    const isHashAdmin = typeof window !== 'undefined' && window.location.hash === '#admin';
-    return (isSearchAdmin || isHashAdmin) ? 'admin' : 'register';
-  });
+  const [currentPath, setCurrentPath] = useState(() => 
+    typeof window !== 'undefined' ? window.location.pathname : '/'
+  );
 
   // Firebase state lifted from admin dashboard to enable real-time unified synchronization
   const [user, setUser] = useState<FirebaseUser | null>(null);
@@ -27,20 +25,25 @@ export default function App() {
   const [isLoadingVolunteers, setIsLoadingVolunteers] = useState(false);
   const [volunteerError, setVolunteerError] = useState<string | null>(null);
 
-  // Monitor location hash changes to switch views dynamically
+  // Monitor location pathname changes to switch views dynamically
   useEffect(() => {
     const handleLocationChange = () => {
-      const isSearchAdmin = window.location.search.includes('view=admin') || window.location.search.includes('admin=true');
-      const isHashAdmin = window.location.hash === '#admin';
-      if (isSearchAdmin || isHashAdmin) {
-        setActiveTab('admin');
-      } else {
-        setActiveTab('register');
-      }
+      setCurrentPath(window.location.pathname);
     };
-    window.addEventListener('hashchange', handleLocationChange);
-    return () => window.removeEventListener('hashchange', handleLocationChange);
+    window.addEventListener('popstate', handleLocationChange);
+    // Custom listener for programmatic pushState updates
+    window.addEventListener('pushstate', handleLocationChange);
+    return () => {
+      window.removeEventListener('popstate', handleLocationChange);
+      window.removeEventListener('pushstate', handleLocationChange);
+    };
   }, []);
+
+  const navigateTo = (to: string) => {
+    window.history.pushState({}, '', to);
+    setCurrentPath(to);
+    window.dispatchEvent(new Event('pushstate'));
+  };
 
   // Set up Firebase Auth state tracking
   useEffect(() => {
@@ -198,16 +201,13 @@ export default function App() {
             </div>
           </div>
 
-          {/* Navigation Tab / View Switcher (Exposed ONLY if URL has admin param/hash, active tab is admin, or we are signed in as administrator) */}
-          {(isAdmin || window.location.hash === '#admin' || window.location.search.includes('admin') || activeTab === 'admin') && (
+          {/* Navigation Tab / View Switcher (Exposed ONLY if path is /admin or we are signed in as administrator) */}
+          {(isAdmin || currentPath === '/admin') && (
             <div className="flex bg-slate-100 p-1 rounded-xl border border-slate-200">
               <button
-                onClick={() => {
-                  setActiveTab('register');
-                  window.location.hash = '';
-                }}
+                onClick={() => navigateTo('/')}
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                  activeTab === 'register' 
+                  currentPath !== '/admin' 
                     ? 'bg-white text-teal-850 shadow-xs border border-slate-200/40' 
                     : 'text-slate-500 hover:text-slate-800'
                 }`}
@@ -216,12 +216,9 @@ export default function App() {
                 Volunteer Form
               </button>
               <button
-                onClick={() => {
-                  setActiveTab('admin');
-                  window.location.hash = 'admin';
-                }}
+                onClick={() => navigateTo('/admin')}
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                  activeTab === 'admin' 
+                  currentPath === '/admin' 
                     ? 'bg-slate-800 text-white shadow-xs' 
                     : 'text-slate-500 hover:text-slate-800'
                 }`}
@@ -237,7 +234,7 @@ export default function App() {
 
       {/* Main Framework Stage */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 md:px-6 py-6 mt-2">
-        {activeTab === 'register' ? (
+        {currentPath !== '/admin' ? (
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
             
             {/* Main content viewport */}
@@ -299,6 +296,7 @@ export default function App() {
               handleGoogleSignIn={handleGoogleSignIn}
               handleSignOut={handleSignOut}
               handleSandboxAdminLogin={handleSandboxAdminLogin}
+              navigateToHome={() => navigateTo('/')}
             />
           </div>
         )}
@@ -310,7 +308,16 @@ export default function App() {
       {/* Humble Footer */}
       <footer className="mt-8 mb-6 flex flex-col sm:flex-row justify-between text-[10px] text-slate-400 font-medium px-4 md:px-8 max-w-7xl w-full mx-auto gap-2">
         <p>© 2026 NayePankh Foundation • Secure Dashboard (AES-256 Encrypted)</p>
-        <p>Last Data Refresh: 2 mins ago</p>
+        <div className="flex items-center gap-3">
+          <button 
+            onClick={() => navigateTo('/admin')} 
+            className="hover:text-teal-600 transition-colors cursor-pointer font-bold uppercase tracking-wider"
+          >
+            Admin Portal Access
+          </button>
+          <span>•</span>
+          <p>Last Data Refresh: 2 mins ago</p>
+        </div>
       </footer>
 
     </div>

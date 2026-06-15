@@ -23,6 +23,7 @@ interface AdminDashboardProps {
   handleGoogleSignIn: () => Promise<void>;
   handleSignOut: () => Promise<void>;
   handleSandboxAdminLogin: () => void;
+  navigateToHome?: () => void;
 }
 
 export default function AdminDashboard({
@@ -35,6 +36,7 @@ export default function AdminDashboard({
   handleGoogleSignIn,
   handleSignOut,
   handleSandboxAdminLogin,
+  navigateToHome,
 }: AdminDashboardProps) {
   // Theme & Layout toggle
   const [darkMode, setDarkMode] = useState<boolean>(true); // Admin cockpit default
@@ -353,6 +355,9 @@ export default function AdminDashboard({
   const onSignOutClick = () => {
     handleSignOut();
     setActiveVolunteer(null);
+    if (navigateToHome) {
+      navigateToHome();
+    }
   };
 
   // Dynamic KPI counts based strictly on database files
@@ -407,6 +412,16 @@ export default function AdminDashboard({
             </svg>
             Sign in with Google Account
           </button>
+
+          {navigateToHome && (
+            <button
+              onClick={navigateToHome}
+              className="w-full flex items-center justify-center gap-2 py-3 bg-slate-50 border border-slate-200 hover:border-slate-350 hover:bg-slate-100 text-slate-700 font-bold rounded-xl text-xs tracking-wider uppercase transition-all cursor-pointer shadow-xs"
+            >
+              <Users className="w-4 h-4 text-teal-600 font-bold" />
+              Go Back to Volunteer Form
+            </button>
+          )}
 
           <div className="pt-5 border-t border-slate-100">
             <p className="text-[9px] text-slate-400 font-mono tracking-widest uppercase mb-2">Simulation Sandboxing Option :</p>
