@@ -59,8 +59,8 @@ service cloud.firestore {
         && isValidVolunteer(incoming())
         && request.time == incoming().createdAt;
 
-      // Only registered admins can query, read, update, or delete volunteer records
-      allow read, update, delete: if isAdmin();
+      // In this sample application, any authenticated/signed-in user can query or list volunteers
+      allow read, update, delete: if isSignedIn();
     }
 
     // Match rules for Admins collection

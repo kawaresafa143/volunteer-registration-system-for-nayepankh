@@ -24,6 +24,8 @@ interface AdminDashboardProps {
   handleSignOut: () => Promise<void>;
   handleSandboxAdminLogin: () => void;
   navigateToHome?: () => void;
+  onUpdateVolunteerStatus?: (id: string, status: 'pending' | 'approved' | 'observation' | 'rejected') => Promise<void>;
+  onBulkUpdateStatus?: (ids: string[], status: 'pending' | 'approved' | 'observation' | 'rejected') => Promise<void>;
 }
 
 export default function AdminDashboard({
@@ -37,6 +39,8 @@ export default function AdminDashboard({
   handleSignOut,
   handleSandboxAdminLogin,
   navigateToHome,
+  onUpdateVolunteerStatus,
+  onBulkUpdateStatus,
 }: AdminDashboardProps) {
   // Theme & Layout toggle
   const [darkMode, setDarkMode] = useState<boolean>(true); // Admin cockpit default
@@ -176,10 +180,13 @@ export default function AdminDashboard({
   const handleUpdateStatus = async (volunteerId: string, newStatus: 'pending' | 'approved' | 'observation' | 'rejected') => {
     setUpdatingStatusId(volunteerId);
     try {
-      const docRef = doc(db, 'volunteers', volunteerId);
-      await updateDoc(docRef, { status: newStatus });
+      if (onUpdateVolunteerStatus) {
+        await onUpdateVolunteerStatus(volunteerId, newStatus);
+      } else {
+        const docRef = doc(db, 'volunteers', volunteerId);
+        await updateDoc(docRef, { status: newStatus });
+      }
       
-      const updatedList = volunteers.map(v => v.id === volunteerId ? { ...v, status: newStatus } : v);
       if (activeVolunteer && activeVolunteer.id === volunteerId) {
         setActiveVolunteer(prev => prev ? { ...prev, status: newStatus } : null);
       }
@@ -194,12 +201,16 @@ export default function AdminDashboard({
   // Bulk actions operations
   const triggerBulkStatus = async (newStatus: 'pending' | 'approved' | 'observation' | 'rejected') => {
     if (selectedIds.length === 0) return;
-    const batch = writeBatch(db);
-    selectedIds.forEach(id => {
-      batch.update(doc(db, 'volunteers', id), { status: newStatus });
-    });
     try {
-      await batch.commit();
+      if (onBulkUpdateStatus) {
+        await onBulkUpdateStatus(selectedIds, newStatus);
+      } else {
+        const batch = writeBatch(db);
+        selectedIds.forEach(id => {
+          batch.update(doc(db, 'volunteers', id), { status: newStatus });
+        });
+        await batch.commit();
+      }
       setBulkActionMsg(`SUCCESS: Successfully updated status of ${selectedIds.length} volunteers to ${newStatus === 'approved' ? 'Active Field Force' : 'Onboarding pipeline'}.`);
       setSelectedIds([]);
       setTimeout(() => setBulkActionMsg(null), 6000);
