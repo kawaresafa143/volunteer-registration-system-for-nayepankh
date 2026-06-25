@@ -1,20 +1,39 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://ai.google.dev/static/site-assets/images/share-ais-513315318.png" />
-</div>
+# Nayepankh Volunteer Registration System
 
-# Run and deploy your AI Studio app
+Welcome to the **Nayepankh Volunteer Registration System** repository! 
 
-This contains everything you need to run your app locally.
+This platform was built for **Nayepankh**, a non-governmental organization (NGO) dedicated to uplifting underprivileged communities through initiatives like menstrual hygiene drives, food distribution, and crowdfunding campaigns. 
 
-View your app in AI Studio: https://ai.studio/apps/98d23bab-b1e6-40e5-9053-a88e20c01bf1
+This system streamlines the onboarding process for new members, making it easier for them to register, discover events, and actively contribute to these essential causes.
 
-## Run Locally
+---
 
-**Prerequisites:**  Node.js
+## 🚀 Features
 
+* **Volunteer Registrations:** A user-friendly and streamlined sign-up process for new members.
+* **Admin Portal:** A secure, centralized dashboard for managing the platform, events, and user data.
+* **Analytics and Reviewing:** Comprehensive tools for admins to verify volunteer registrations, review specific interests, and track engagement metrics.
+* **AI Chatbot:** An intelligent, integrated assistant that helps users by instantly answering their basic queries.
+* **Automated Document Generator:** Automatically generates official volunteer certificates/documents from the admin portal upon approval.
+* **Document Verification:** A built-in system to ensure the authenticity and validity of user-submitted documents.
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+---
+
+## 🛠️ Tech Stack
+*(Note: Update this section based on the specific technologies you used!)*
+
+* **Frontend:** HTML, CSS, JavaScript
+* **Backend:** Python (Flask/Django) / Node.js
+* **Database:** MySQL / PostgreSQL / MongoDB
+* **AI Integration:** OpenAI API / Gemini API (for Chatbot)
+
+---
+
+## ⚙️ Installation & Setup
+
+Follow these steps to set up the project on your local machine:
+
+**1. Clone the repository**
+```bash
+git clone [https://github.com/your-username/nayepankh-volunteer-system.git](https://github.com/your-username/nayepankh-volunteer-system.git)
+cd nayepankh-volunteer-system
